@@ -1,0 +1,153 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+model User {
+  id String @id @default(cuid())
+  name String
+  email String @unique
+  passwordHash String
+  verifiedAt DateTime?
+  role String @default("student")
+  level Int @default(1)
+  onboarding Boolean @default(false)
+  authVersion Int @default(0)
+  disabledAt DateTime?
+  createdAt DateTime @default(now())
+  tokens AuthToken[]
+  attempts Attempt[]
+  points PointEntry[]
+  participants Participant[]
+  rooms Room[]
+}
+model AuthToken {
+  hash String @id
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind String
+  expiresAt DateTime
+}
+model Unit {
+  id String @id
+  level Int
+  title String
+  theme String
+  description String
+  archived Boolean @default(false)
+  developmentOnly Boolean @default(false)
+  questions Question[]
+}
+model Question {
+  id String @id
+  unitId String
+  unit Unit @relation(fields: [unitId], references: [id], onDelete: Restrict)
+  level Int
+  pool String
+  status String @default("draft")
+  version Int @default(1)
+  position Int @default(0)
+  data Json
+  updatedAt DateTime @updatedAt
+  @@index([level, pool, status])
+}
+model Attempt {
+  id String @id @default(cuid())
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind String
+  unitId String?
+  level Int
+  targetLevel Int
+  configVersion String
+  state Json
+  createdAt DateTime @default(now())
+  completedAt DateTime?
+  answers Answer[]
+  @@index([userId, kind, createdAt])
+}
+model Room {
+  id String @id @default(cuid())
+  code String @unique
+  hostId String
+  host User @relation(fields: [hostId], references: [id], onDelete: Cascade)
+  state Json
+  status String @default("lobby")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  participants Participant[]
+  @@index([status])
+}
+model Participant {
+  id String @id @default(cuid())
+  roomId String
+  room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  userId String?
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  name String
+  tokenHash String @unique
+  state Json
+  answers Answer[]
+  @@index([roomId])
+}
+model Answer {
+  id String @id @default(cuid())
+  attemptId String?
+  attempt Attempt? @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  participantId String?
+  participant Participant? @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  questionId String
+  questionVersion Int
+  value Json
+  correct Boolean
+  score Int
+  elapsedMs Int
+  replayCount Int
+  createdAt DateTime @default(now())
+  @@unique([attemptId, questionId])
+  @@unique([participantId, questionId])
+}
+model PointEntry {
+  id String @id @default(cuid())
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  key String @unique
+  amount Int
+  createdAt DateTime @default(now())
+}
+model Report {
+  id String @id @default(cuid())
+  questionId String
+  message String
+  createdAt DateTime @default(now())
+}
+model RateLimit {
+  key String @id
+  count Int
+  expiresAt DateTime
+}
+model ReviewConfig {
+  id String @id
+  approved Boolean @default(false)
+  reviewer String?
+  reviewedAt DateTime?
+}
+
+model QuestionRevision {
+  id String @id @default(cuid())
+  questionId String
+  version Int
+  data Json
+  editorId String
+  createdAt DateTime @default(now())
+  @@unique([questionId, version])
+}
+
+model AppSettings {
+  id String @id @default("main")
+  name String @default("أذنك")
+  tagline String @default("Selangkah lebih dekat untuk memahami.")
+  supportEmail String @default("")
+}

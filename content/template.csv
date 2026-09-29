@@ -1,0 +1,2 @@
+id,unit_id,level,pool,type,prompt,category,audio,options,accepted,transcript,explanation,harakat,seconds
+contoh-draft-001,level-1-unit-1,1,practice,pilihan_ganda,Dengarkan kalimat lalu pilih tujuan pembicara.,Kehidupan kampus,"[{""url"":""/media/draft-001.mp3"",""duration"":5,""native"":false,""license"":"""",""reviewed"":false}]","[{""id"":""a"",""text"":""المكتبة""},{""id"":""b"",""text"":""المطعم""}]","[""a""]",أذهب إلى المكتبة بعد المحاضرة.,Pembicara pergi ke perpustakaan setelah kuliah.,partial,20

@@ -1,0 +1,35 @@
+name: checks
+on: [push, pull_request]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: istima
+          POSTGRES_PASSWORD: istima
+          POSTGRES_DB: istima_test
+        ports: [5432:5432]
+        options: --health-cmd "pg_isready -U istima" --health-interval 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://istima:istima@localhost:5432/istima_test
+      NEXTAUTH_URL: http://localhost:3000
+      APP_URL: http://localhost:3000
+      NEXTAUTH_SECRET: ci-only-secret-not-for-production-12345
+      SOCKET_SECRET: ci-only-socket-secret-not-production-12345
+      RUN_DB_TESTS: 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run db:migrate
+      - run: npm run db:seed
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
