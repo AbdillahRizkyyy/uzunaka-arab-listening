@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Mic, Square, Upload, Check, AudioLines } from 'lucide-react';
 import type { Media } from '@/lib/admin-media';
+import { uploadMedia } from '@/lib/media-client';
 import { useAdmin } from './context';
 
 export function MediaManager({
@@ -59,12 +60,7 @@ export function MediaManager({
           await context.close();
         }
       }
-      const form = new FormData();
-      form.append('file', file);
-      form.append('duration', String(duration));
-      const r = await fetch('/api/admin/media', { method: 'POST', body: form });
-      const media = await r.json();
-      if (!r.ok) throw new Error(media.error);
+      const media = await uploadMedia(file, duration);
       await load();
       setRecorded(null);
       onSelect?.(media);
@@ -164,8 +160,8 @@ export function MediaManager({
         <div>
           <h3>{kind === 'image' ? 'Tambahkan gambar' : 'Unggah atau rekam media'}</h3>
           <p>
-            Audio maksimal 3 menit, file maksimal 20 MB. File tersimpan di komputer server
-            development.
+            Audio maksimal 3 menit, file maksimal 20 MB. Media yang disimpan dapat digunakan
+            kembali untuk soal lain.
           </p>
         </div>
         <label className="button outline">

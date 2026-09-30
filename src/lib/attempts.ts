@@ -2,6 +2,7 @@ import { randomInt } from 'node:crypto';
 import { Prisma } from '@prisma/client';
 import { atomic, json, Tx } from './db';
 import { Question, CONFIG_VERSION, commandSchema } from './contracts';
+import { allowsDemoContent, appEnvironment } from './environment';
 import {
   assert,
   freshPlayback,
@@ -47,7 +48,7 @@ async function select(tx: Tx, level: number, count: number, seen: Set<string>) {
       status: 'published',
       unit: {
         archived: false,
-        ...(process.env.NODE_ENV === 'production' ? { developmentOnly: false } : {}),
+        ...(!allowsDemoContent() ? { developmentOnly: false } : {}),
       },
     },
   });
@@ -62,7 +63,7 @@ export async function eligible(tx: Tx, userId: string, level: number) {
     where: {
       level,
       archived: false,
-      ...(process.env.NODE_ENV === 'production' ? { developmentOnly: false } : {}),
+      ...(!allowsDemoContent() ? { developmentOnly: false } : {}),
       questions: { some: { pool: 'practice', status: 'published' } },
     },
   });
@@ -77,7 +78,7 @@ export async function eligible(tx: Tx, userId: string, level: number) {
       status: 'published',
       unit: {
         archived: false,
-        ...(process.env.NODE_ENV === 'production' ? { developmentOnly: false } : {}),
+        ...(!allowsDemoContent() ? { developmentOnly: false } : {}),
       },
     },
     select: { id: true },
@@ -116,7 +117,7 @@ export async function startAttempt(
       assert(user.onboarding, 'Selesaikan tes penempatan terlebih dahulu.', 403);
       const unit = await tx.unit.findUnique({ where: { id: unitId ?? '' } });
       assert(
-        unit && !unit.archived && (process.env.NODE_ENV !== 'production' || !unit.developmentOnly),
+        unit && !unit.archived && (allowsDemoContent() || !unit.developmentOnly),
         'Unit tidak tersedia atau telah diarsipkan.',
         404,
       );
@@ -131,7 +132,7 @@ export async function startAttempt(
       assert(questions.length > 0, 'Materi unit ini belum tersedia.', 409);
     } else {
       const review = await tx.reviewConfig.findUnique({ where: { id: CONFIG_VERSION } });
-      assert(review?.approved, 'Tes belum tersedia: menunggu validasi pengajar.', 409);
+      assert(allowsDemoContent() || review?.approved, 'Tes belum tersedia: menunggu validasi pengajar.', 409);
       const history = await tx.attempt.findMany({
         where: { userId, kind: { in: ['onboarding', 'level_up'] } },
         orderBy: { createdAt: 'desc' },
@@ -181,7 +182,7 @@ export async function startAttempt(
         unitId,
         level,
         targetLevel,
-        configVersion: CONFIG_VERSION,
+        configVersion: allowsDemoContent() ? `${CONFIG_VERSION}-${appEnvironment()}-demo` : CONFIG_VERSION,
         state: json(state),
       },
     });

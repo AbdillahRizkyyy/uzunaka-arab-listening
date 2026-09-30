@@ -17,6 +17,7 @@ import {
 } from '@/lib/rooms';
 import { issueTicket, limit } from '@/lib/security';
 import { adminRead, adminWrite, saveRevision, settings } from '@/lib/admin-controls';
+import { allowsDemoContent } from '@/lib/environment';
 export const dynamic = 'force-dynamic';
 type Context = { params: Promise<{ path: string[] }> };
 export async function GET(request: NextRequest, context: Context) {
@@ -32,7 +33,7 @@ export async function GET(request: NextRequest, context: Context) {
       const units = await db.unit.findMany({
         where: {
           archived: false,
-          ...(process.env.NODE_ENV === 'production' ? { developmentOnly: false } : {}),
+          ...(!allowsDemoContent() ? { developmentOnly: false } : {}),
         },
         include: {
           _count: { select: { questions: { where: { pool: 'practice', status: 'published' } } } },
@@ -233,7 +234,7 @@ export async function POST(request: NextRequest, context: Context) {
           const q = await tx.question.findUnique({ where: { id: input.id } });
           assert(q, 'Soal tidak ditemukan.', 404);
           const unit = await tx.unit.findUniqueOrThrow({ where: { id: q.unitId } });
-          if (input.publish && !(unit.developmentOnly && process.env.NODE_ENV !== 'production'))
+          if (input.publish && !(unit.developmentOnly && allowsDemoContent()))
             assert(
               canPublish(questionSchema.parse(q.data)),
               'Audio native, tinjauan pengajar, dan izin penggunaan wajib sebelum publikasi.',

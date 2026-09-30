@@ -1,14 +1,15 @@
 import 'dotenv/config';
 import { db, json } from '../src/lib/db';
 import { levels, questionSchema, type Question } from '../src/lib/contracts';
+import { allowsDemoContent } from '../src/lib/environment';
 
 const audio = (duration = 1) => [
   {
     url: '/media/test-tone.wav',
     duration,
-    native: true,
+    native: false,
     license: 'Fixture development lokal — bukan materi produksi',
-    reviewed: true,
+    reviewed: false,
   },
 ];
 
@@ -70,6 +71,8 @@ function makeQuestion(level: number, pool: 'practice' | 'assessment', index: num
 }
 
 async function main() {
+  if (!allowsDemoContent() || !['localhost', '127.0.0.1'].includes(new URL(process.env.DATABASE_URL!).hostname))
+    throw new Error('Fixture lama hanya untuk database lokal. Gunakan seed-staging untuk testing cloud.');
   let created = 0;
   for (const level of levels) {
     for (let i = 0; i < 2; i++) {
@@ -82,8 +85,9 @@ async function main() {
           title: i === 0 ? `${level.title} · Fondasi` : `${level.title} · Praktik`,
           theme: i === 0 ? 'Fondasi listening' : 'Praktik terpandu',
           description: `Paket fixture untuk mencoba latihan ${level.title.toLowerCase()}.`,
+          developmentOnly: true,
         },
-        update: {},
+        update: { developmentOnly: true },
       });
     }
     for (const pool of ['practice', 'assessment'] as const) {
@@ -102,8 +106,8 @@ async function main() {
   }
   await db.reviewConfig.upsert({
     where: { id: 'placement-v1' },
-    create: { id: 'placement-v1', approved: true, reviewer: 'Fixture development' , reviewedAt: new Date() },
-    update: { approved: true, reviewer: 'Fixture development', reviewedAt: new Date() },
+    create: { id: 'placement-v1', approved: false },
+    update: {},
   });
   // Keep one dummy user ready for the placement flow and one ready for practice/live.
   await db.user.updateMany({

@@ -14,6 +14,7 @@ import {
 } from './domain';
 import { hash, token } from './security';
 import { shuffle } from './attempts';
+import { allowsDemoContent } from './environment';
 export type RoomState = {
   questions: Question[];
   index: number;
@@ -63,7 +64,7 @@ export async function createRoom(userId: string, unitId: string) {
           status: 'published',
           unit: {
             archived: false,
-            ...(process.env.NODE_ENV === 'production' ? { developmentOnly: false } : {}),
+            ...(!allowsDemoContent() ? { developmentOnly: false } : {}),
           },
         },
         orderBy: [{ position: 'asc' }, { id: 'asc' }],
