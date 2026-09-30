@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 const profile = z.object({
   email: z.email().transform((email) => email.trim().toLowerCase()),
-  password: z.string().min(16).max(72),
+  password: z.string().min(8).max(72),
 });
 
 export function stagingCredentials(env: NodeJS.ProcessEnv = process.env) {
@@ -15,11 +15,7 @@ export function stagingCredentials(env: NodeJS.ProcessEnv = process.env) {
       password: env[`STAGING_${role}_PASSWORD`],
     });
     if (!result.success)
-      throw new Error(`Isi STAGING_${role}_EMAIL dan STAGING_${role}_PASSWORD (16–72 karakter).`);
-    if (/istima\.local$|example\.com$|e2e\.example\.invalid$/.test(result.data.email))
-      throw new Error(`STAGING_${role}_EMAIL harus memakai alamat testing Anda, bukan akun fixture lokal.`);
-    if (/^(admin|user[12]|password|replace-with|E2e-only)/i.test(result.data.password))
-      throw new Error(`Gunakan kata sandi acak unik untuk STAGING_${role}_PASSWORD.`);
+      throw new Error(`Isi STAGING_${role}_EMAIL dan STAGING_${role}_PASSWORD (minimal 8 karakter).`);
     return { ...result.data, role: role === 'ADMIN' ? 'admin' : 'student', onboarding: role !== 'USER2' };
   });
   if (new Set(credentials.map((p) => p.email)).size !== credentials.length)

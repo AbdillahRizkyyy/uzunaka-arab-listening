@@ -7,7 +7,7 @@ import { assert } from '@/lib/domain';
 import { hash, limit, token } from '@/lib/security';
 import { sendToken } from '@/lib/mail';
 import { requireUser } from '@/lib/auth';
-const password = z.string().min(12, 'Password minimal 12 karakter.').max(128);
+const password = z.string().min(8, 'Password minimal 8 karakter.').max(128);
 const schema = z.discriminatedUnion('action', [
   z.object({
     action: z.literal('register'),

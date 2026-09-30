@@ -191,13 +191,13 @@ function Account() {
               <input
                 type="password"
                 required
-                minLength={mode === 'login' ? 1 : 12}
+                minLength={mode === 'login' ? 1 : 8}
                 maxLength={128}
                 autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              {mode !== 'login' && <small className="muted">Minimal 12 karakter.</small>}
+              {mode !== 'login' && <small className="muted">Minimal 8 karakter.</small>}
             </label>
           )}
           {mode === 'verify' && <p>Klik tombol di bawah untuk mengonfirmasi alamat email Anda.</p>}
