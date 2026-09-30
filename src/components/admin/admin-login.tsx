@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import { ArrowRight } from 'lucide-react';
-import { BrandLockup, BrandArtwork } from '@/components/brand';
+import { BrandLockup } from '@/components/brand';
 export function AdminLogin() {
   const [email, setEmail] = useState(''),
     [password, setPassword] = useState(''),
@@ -35,12 +35,25 @@ export function AdminLogin() {
           <BrandLockup />
           <span className="admin-badge">ADMIN</span>
         </Link>
-        <div>
-          <BrandArtwork className="admin-login-artwork" />
-          <h1>Ruang pengelola belajar.</h1>
+        <div className="admin-login-message">
+          <span className="admin-login-kicker">RUANG PENGELOLA</span>
+          <h1>
+            Awal dari
+            <br />
+            pengalaman
+            <br />
+            <em>belajar bermakna.</em>
+          </h1>
           <p>Kelola materi, rekaman, dan sesi listening dari satu dashboard.</p>
+          <div className="admin-login-wave" aria-hidden="true">
+            {[8, 14, 22, 35, 25, 43, 61, 45, 29, 49, 73, 54, 34, 59, 44, 26, 40, 28, 18, 10].map(
+              (height, index) => (
+                <i key={index} style={{ height }} />
+              ),
+            )}
+          </div>
         </div>
-        <span className="eyebrow">DENGARKAN. PAHAMI. BERTUMBUH.</span>
+        <span className="admin-login-footer">Dengarkan. Pahami. Bertumbuh.</span>
       </section>
       <section className="admin-login-form">
         <div className="eyebrow">PANEL PENGELOLA</div>

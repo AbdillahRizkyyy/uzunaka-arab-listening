@@ -19,7 +19,6 @@ import {
 } from 'lucide-react';
 import { levels } from '@/lib/contracts';
 import { api } from '@/lib/client';
-import { BrandArtwork } from './brand';
 type Catalog = {
   user: null | { name: string; level: number; onboarding: boolean; points: number; role: string };
   units: { id: string; level: number; title: string; description: string; count: number }[];
@@ -101,8 +100,20 @@ export function Dashboard() {
               : '15 soal · 5 kategori · Penempatan awal'}
           </span>
         </div>
-        <div className="welcome-brand">
-          <BrandArtwork />
+        <div className="welcome-brand" aria-hidden="true">
+          <div className="welcome-sound-orbit">
+            <div className="welcome-sound-wave">
+              {[12, 22, 35, 52, 38, 63, 84, 58, 35, 66, 94, 70, 47, 61, 37, 23, 12].map(
+                (height, index) => (
+                  <i key={index} style={{ height }} />
+                ),
+              )}
+            </div>
+            <span className="welcome-sound-symbol">
+              <Ear size={23} strokeWidth={1.5} />
+            </span>
+          </div>
+          <span className="welcome-sound-caption">SETIAP SUARA PUNYA MAKNA</span>
         </div>
       </section>
       <div className="stats-row">

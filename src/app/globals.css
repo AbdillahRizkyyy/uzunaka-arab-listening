@@ -123,20 +123,15 @@ a svg {
 .brand-emblem {
   display: block;
   position: relative;
-  width: 52px;
-  height: 46px;
-  overflow: hidden;
-  border-radius: 10px;
-  background: #fcfaf3;
+  width: 56px;
+  height: 56px;
   flex-shrink: 0;
 }
 .brand-emblem img {
-  position: absolute;
-  width: 108px;
-  height: 108px;
-  max-width: none;
-  left: -28px;
-  top: -15px;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 .brand-copy {
   display: flex;
@@ -146,7 +141,7 @@ a svg {
 }
 .brand-wordmark {
   font-family: 'Noto Naskh Arabic', 'DM Sans', serif;
-  font-size: 37px;
+  font-size: 36px;
   line-height: 1.2;
   font-weight: 600;
   letter-spacing: 0;
@@ -163,23 +158,90 @@ a svg {
   display: block;
   width: 100%;
   height: auto;
-  border-radius: 22px;
+  object-fit: contain;
 }
 .welcome-brand {
   flex: 1;
-  min-width: 220px;
-  padding: 30px;
+  min-width: 210px;
+  padding: 30px 30px 24px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+  position: relative;
+}
+.welcome-sound-orbit {
+  width: 218px;
+  height: 218px;
+  border-radius: 50%;
+  border: 1px solid #eed7a021;
   display: grid;
   place-items: center;
+  position: relative;
+  background: radial-gradient(circle, #dfc1840b, transparent 70%);
 }
-.welcome-brand .brand-artwork {
-  max-width: 290px;
-  box-shadow: 0 12px 40px #00291f38;
+.welcome-sound-orbit::before,
+.welcome-sound-orbit::after {
+  content: '';
+  position: absolute;
+  inset: 24px;
+  border: 1px solid #eed7a012;
+  border-radius: inherit;
+}
+.welcome-sound-orbit::after {
+  inset: -28px;
+  border-color: #eed7a009;
+}
+.welcome-sound-wave {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 100px;
+}
+.welcome-sound-wave i {
+  width: 5px;
+  border-radius: 10px;
+  background: linear-gradient(#e0c287, #bb944f);
+}
+.welcome-sound-wave i:nth-child(3n) {
+  opacity: 0.55;
+}
+.welcome-sound-symbol {
+  position: absolute;
+  bottom: -17px;
+  display: grid;
+  place-items: center;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  color: #d9bf86;
+  background: #194b3d;
+}
+.welcome-sound-caption {
+  color: #b9cbbf;
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 2px;
 }
 @media (max-width: 900px) {
   .welcome-brand {
-    padding: 18px;
+    padding: 18px 18px 18px 0;
     min-width: 170px;
+  }
+  .welcome-sound-orbit {
+    width: 165px;
+    height: 165px;
+  }
+  .welcome-sound-wave {
+    gap: 4px;
+  }
+  .welcome-sound-wave i {
+    width: 4px;
+  }
+  .welcome-sound-caption {
+    font-size: 7px;
+    letter-spacing: 1px;
   }
 }
 @media (max-width: 700px) {
@@ -187,14 +249,12 @@ a svg {
     gap: 7px;
   }
   .brand-emblem {
-    width: 40px;
-    height: 38px;
+    width: 45px;
+    height: 45px;
   }
   .brand-emblem img {
-    width: 88px;
-    height: 88px;
-    left: -24px;
-    top: -12px;
+    width: 100%;
+    height: 100%;
   }
   .brand-wordmark {
     font-size: 29px;

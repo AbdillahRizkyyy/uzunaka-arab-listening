@@ -11,7 +11,7 @@ import { BRAND_DESCRIPTION, BRAND_NAME } from '@/lib/brand';
 export const metadata: Metadata = {
   title: { default: `${BRAND_NAME} — ${BRAND_DESCRIPTION}`, template: `%s · ${BRAND_NAME}` },
   description: `${BRAND_NAME}, telingamu. Dengarkan, pahami, dan latih bahasa Arab melalui latihan mandiri dan kuis bersama kelas.`,
-  icons: { icon: '/brand/udhunak-logo.jpeg', apple: '/brand/udhunak-logo.jpeg' },
+  icons: { icon: '/brand/uzunaka-mark.png', apple: '/brand/uzunaka-mark.png' },
 };
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (

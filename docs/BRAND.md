@@ -2,7 +2,11 @@
 
 Nama aplikasi: **أذنك**, berarti **telingamu**. Deskripsi: **Kuis Bahasa Arab**.
 
-Logo asli diberikan client pada 30 September 2026 dan disimpan di `public/brand/udhunak-logo.jpeg`. Komponen navigasi menampilkan bagian lambang melalui tata letak CSS; beranda dan halaman login admin menampilkan artwork lengkap. File sumber tidak digambar ulang.
+Logo asli diberikan client pada 30 September 2026 dan disimpan sebagai referensi di `public/brand/udhunak-logo.jpeg`. Versi web menggunakan lambang transparan `public/brand/uzunaka-mark.png`, yang diadaptasi dengan built-in imagegen dari simbol telinga, headphone, dan gelombang emas pada referensi. Teks Arab ditampilkan terpisah agar tetap terbaca pada layar kecil. Poster asli tidak digunakan sebagai kartu di antarmuka.
+
+Navigasi menggunakan lambang kecil dan wordmark. Pada latar gelap, lambang ditampilkan dengan warna emas melalui CSS. Hero menggunakan tipografi dan motif gelombang suara yang menyatu dengan halaman.
+
+Prompt aset final tercatat di `public/brand/uzunaka-mark.prompt.md`. File sumber client tetap disimpan tanpa perubahan.
 
 Palet antarmuka mengikuti logo: hijau gelap, emas, dan latar cream. Teks nama Arab menggunakan font Noto Naskh Arabic serta arah teks yang terisolasi agar tidak mengubah urutan navigasi Indonesia.
 
