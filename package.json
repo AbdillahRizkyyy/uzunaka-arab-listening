@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "أذنك — Kuis Bahasa Arab, platform listening bahasa Arab",
   "private": true,
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "dev": "next dev --hostname 0.0.0.0",
     "local:setup": "tsx scripts/local-setup.ts",
@@ -61,6 +64,8 @@
     "zod": "4.6.5"
   },
   "devDependencies": {
+    "@emnapi/core": "^1.11.3",
+    "@emnapi/wasi-threads": "^1.2.2",
     "@playwright/test": "1.63.0",
     "@types/node": "26.6.2",
     "@types/nodemailer": "8.0.2",
