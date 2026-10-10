@@ -3,7 +3,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { signIn, signOut } from 'next-auth/react';
 import Link from 'next/link';
-import { ArrowRight, Mail, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Mail, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 import { api } from '@/lib/client';
 import { BRAND_NAME } from '@/lib/brand';
 function Account() {
@@ -11,6 +11,8 @@ function Account() {
     [mode, setMode] = useState(params.get('mode') ?? 'login'),
     [email, setEmail] = useState(''),
     [password, setPassword] = useState(''),
+    [showPassword, setShowPassword] = useState(false),
+    [showDeletePassword, setShowDeletePassword] = useState(false),
     [name, setName] = useState(''),
     [message, setMessage] = useState(''),
     [error, setError] = useState(''),
@@ -92,11 +94,22 @@ function Account() {
             <>
               <label className="field">
                 Konfirmasi dengan password
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+                <span className="password-input">
+                  <input
+                    type={showDeletePassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle"
+                    onClick={() => setShowDeletePassword((visible) => !visible)}
+                    aria-label={showDeletePassword ? 'Sembunyikan password' : 'Lihat password'}
+                    title={showDeletePassword ? 'Sembunyikan password' : 'Lihat password'}
+                  >
+                    {showDeletePassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </span>
               </label>
               <button
                 className="button danger"
@@ -188,15 +201,26 @@ function Account() {
           {['login', 'register', 'reset'].includes(mode) && (
             <label className="field">
               Password
-              <input
-                type="password"
-                required
-                minLength={mode === 'login' ? 1 : 8}
-                maxLength={128}
-                autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <span className="password-input">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  minLength={mode === 'login' ? 1 : 8}
+                  maxLength={128}
+                  autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() => setShowPassword((visible) => !visible)}
+                  aria-label={showPassword ? 'Sembunyikan password' : 'Lihat password'}
+                  title={showPassword ? 'Sembunyikan password' : 'Lihat password'}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </span>
               {mode !== 'login' && <small className="muted">Minimal 8 karakter.</small>}
             </label>
           )}
