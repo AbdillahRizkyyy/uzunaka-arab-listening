@@ -68,15 +68,14 @@ async function main() {
       for (const unit of units) await tx.unit.upsert({
         where: { id: unit.id }, create: unit, update: { developmentOnly: true },
       });
-      for (const [position, source] of questions.entries()) {
+      const rows = questions.map((source, position) => {
         const q = questionSchema.parse(source);
-        await tx.question.upsert({
-          where: { id: q.id },
-          create: { id: q.id, unitId: q.unitId, level: q.level, pool: q.pool,
-            version: q.version, status: 'published', position, data: json(q) },
-          update: {},
-        });
-      }
+        return { id: q.id, unitId: q.unitId, level: q.level, pool: q.pool,
+          version: q.version, status: 'published', position, data: json(q) };
+      });
+      // One insert avoids hundreds of network round trips to the staging database.
+      // Existing questions (including client edits) must remain untouched on reruns.
+      await tx.question.createMany({ data: rows, skipDuplicates: true });
     }, { timeout: 60000 });
   }
   for (const [index, profile] of profiles.entries()) {
@@ -98,8 +97,10 @@ async function main() {
   console.log('Audio Arab bersifat sintetis; assessment memakai fixture teknis dan bukan validasi kemampuan bahasa.');
 }
 
-main().catch(() => {
+main().catch((error: unknown) => {
   // Do not print Prisma/Supabase error objects: they can include connection details.
   console.error('Bootstrap staging gagal. Periksa APP_ENV, kredensial bootstrap, koneksi database, dan konfigurasi Storage. Tidak ada rahasia dicetak.');
+  const code = typeof error === 'object' && error !== null && 'code' in error ? String(error.code) : '';
+  if (/^P\d{4}$/.test(code)) console.error('Kode database:', code);
   process.exitCode = 1;
 }).finally(() => db.$disconnect());
