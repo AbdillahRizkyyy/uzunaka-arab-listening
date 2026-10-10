@@ -1,6 +1,20 @@
 import { PrismaClient, Prisma } from '@prisma/client';
 const globalDb = globalThis as unknown as { prisma?: PrismaClient };
-export const db = globalDb.prisma ?? new PrismaClient();
+function datasourceUrl() {
+  const value = process.env.DATABASE_URL;
+  if (!value || !['staging', 'production'].includes(process.env.APP_ENV ?? '')) return value;
+  try {
+    const url = new URL(value);
+    // Vercel creates many short-lived instances. One connection per instance
+    // prevents a burst of admin page loads from exhausting Supavisor's pool.
+    url.searchParams.set('connection_limit', '1');
+    url.searchParams.set('pool_timeout', '20');
+    return url.toString();
+  } catch {
+    return value;
+  }
+}
+export const db = globalDb.prisma ?? new PrismaClient({ datasourceUrl: datasourceUrl() });
 if (process.env.NODE_ENV !== 'production') globalDb.prisma = db;
 export type Tx = Prisma.TransactionClient;
 export const json = (value: unknown) => JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
